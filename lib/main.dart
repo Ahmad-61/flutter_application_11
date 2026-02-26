@@ -443,11 +443,14 @@ class _UserDashboardState extends State<UserDashboard> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text("بوابة ولي الأمر"),
-        centerTitle: true,
-        backgroundColor: Colors.teal[800],
-        foregroundColor: Colors.white,
-      ),
+  title: const Text("بوابة ولي الأمر"),
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.account_circle),
+      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (c) => const ChildProfilePage())),
+    ),
+  ],
+),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -1151,6 +1154,79 @@ class AdminStatsScreen extends StatelessWidget {
         leading: Icon(Icons.analytics, color: col),
         title: Text(title),
         trailing: Text(val, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: col)),
+      ),
+    );
+  }
+}
+class ChildProfilePage extends StatelessWidget {
+  const ChildProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("ملف الطفل"), backgroundColor: Colors.teal[800]),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            // صورة البروفايل مع أيقونة الرفع
+            Center(
+              child: Stack(
+                children: [
+                  const CircleAvatar(
+                    radius: 65,
+                    backgroundColor: Colors.teal,
+                    child: Icon(Icons.person, size: 80, color: Colors.white),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.orange,
+                      child: IconButton(
+                        icon: const Icon(Icons.camera_alt, color: Colors.white),
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("سيتم تفعيل رفع الصور في نسخة الموبايل")),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+            _infoTile(Icons.child_care, "اسم الطفل", "صابر فهد"),
+            _infoTile(Icons.notifications, "الإشعارات", "لديك 3 تنبيهات جديدة"),
+            const Spacer(),
+            // زر تسجيل الخروج
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[700],
+                minimumSize: const Size(double.infinity, 55),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              icon: const Icon(Icons.logout, color: Colors.white),
+              label: const Text("تسجيل الخروج", style: TextStyle(color: Colors.white, fontSize: 18)),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _infoTile(IconData icon, String title, String sub) {
+    return Card(
+      child: ListTile(
+        leading: Icon(icon, color: Colors.teal),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(sub),
       ),
     );
   }
